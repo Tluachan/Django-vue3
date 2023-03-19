@@ -60,15 +60,14 @@ export default{
         console.log('isAuthenticated:', this.$store.state.isAuthenticated)
         this.errors = []
         const product_slug = this.$route.params.product_slug
-        const productID = this.product.id
+        console.log('product slug', product_slug)
+
         const formData = {
             content: this.content,
             rating: this.rating,
-            //product: productID
+            product: product_slug
         }
 
-      //const product_slug = this.$route.params.product_slug
-      console.log('product_slug', product_slug)
       const token = localStorage.getItem('token')
       console.log("print token: ",token)
       await axios

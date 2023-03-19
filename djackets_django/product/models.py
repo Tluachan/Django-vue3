@@ -109,6 +109,10 @@ class Product(models.Model):
 
         return thumbnail
     
+    #def cal_review(self):
+        #get all reviews, filter the one that matches self.id
+        #use average function or something (or maybe do iteration)
+    
 
 class Review(models.Model):
     id = models.AutoField(primary_key=True)

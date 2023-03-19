@@ -1,0 +1,12 @@
+Haven't Started
+- Rating calculation
+- Create shop page for owner - should be similar to review creation page
+- See all the reviews of the owner - should be easy , copy the see all the reviews of each shop
+
+
+Big Stuff
+- Send user information and product(shop) information when you submit review
+
+
+Small stuff
+- Alignment of the shop on all category page

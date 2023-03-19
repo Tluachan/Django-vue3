@@ -4,8 +4,8 @@ from rest_framework.routers import DefaultRouter
 from product import views
 from .views import ReviewViewSet
 
-router = DefaultRouter()
-router.register('reviews', ReviewViewSet, basename='reviews')
+#router = DefaultRouter()
+#router.register('reviews', ReviewViewSet, basename='reviews')
 
 urlpatterns = [
     path('latest-products/', views.LatestProductsList.as_view()),
@@ -14,7 +14,9 @@ urlpatterns = [
     path('products/<slug:category_slug>/',views.CategoryDetail.as_view()),
     path('categories/', views.CategoryList.as_view(), name='category_list'),
     path('products/<slug:product_slug>/reviews', views.ReviewList.as_view()),
-    path('',include(router.urls))
+    path('reviews/', ReviewViewSet.as_view({'get': 'list', 'post': 'create'}), name='review-list'),
+    path('reviews/<int:pk>/', ReviewViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='review-detail')
+   #path('',include(router.urls))
 ]
 
 

@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 
 from rest_framework import generics, viewsets
@@ -14,11 +15,27 @@ from .serializers import ProductSerializer, CategorySerializer, ReviewSerializer
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     queryset = Review.objects.all()
-    
+
+    def create(self, request, *args, **kwargs):
+        print('request', request.data)
+        # get the product object using the slug
+        product_slug = request.data.get('product')
+        print(product_slug)
+        product = get_object_or_404(Product, slug=product_slug)
+        print('product', product)
+        # add the product object to the form data
+        review = Review.objects.create(
+            product=product,
+            content=request.data.get('content'),
+            rating=request.data.get('rating'),
+        )
+        # serialize the new Review instance and return the serialized data
+        serializer = ReviewSerializer(instance=review)
+        print('serializer made')
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     def perform_create(self, serializer):
-        thisUser = self.request.user
-        print("user:", thisUser)
-        serializer.save(user=thisUser)
+        serializer.save()
 
 class ReviewList(APIView):
     def get_object(self, product_slug):

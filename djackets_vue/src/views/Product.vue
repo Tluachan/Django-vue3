@@ -98,11 +98,11 @@ export default {
             const product_slug = this.$route.params.product_slug
             this.$router.push({
                 name: 'Review',
-                query: { 
+                /*query: { 
                     category_slug,
                     product_slug,
                     product: JSON.stringify(this.product) // convert to string to pass as query param
-                    }
+                    }*/
             })
         }        
     }    
