@@ -74,10 +74,10 @@ export default {
                     axios.defaults.headers.common["Authorization"] = "Token " + token
 
                     localStorage.setItem("token", token)
-
                     const toPath = this.$route.query.to || '/my-account'
-
                     this.$router.push(toPath)
+
+
                 })
                 .catch(error => {
                     if (error.response) {
@@ -90,6 +90,19 @@ export default {
                         console.log(JSON.stringify(error))
                     }
                 })
+                await axios
+                    .get('/api/v1/users/me')
+                    .then(response => {
+                        this.$store.commit('setUser', {'id': response.data.id, 'username': response.data.username})
+                        localStorage.setItem('username', response.data.username)
+                        localStorage.setItem('userid', response.data.id)
+
+
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })  
+
         }
     }
 }

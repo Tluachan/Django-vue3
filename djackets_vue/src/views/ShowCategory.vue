@@ -1,66 +1,135 @@
 <template>
-  <div class="page-categories">
+  <div class="home">
     <div class="columns is-multiline">
-      <div v-for="category in categories" :key="category.id" class="column is-4">
-        <div class="card">
-          <div class="card-image">
-            <figure class="image is-4by3">
-              <img :src="category.image" alt="Category image">
-            </figure>
-          </div>
-          <div class="card-content">
-            <div class="media">
-              <div class="media-content">
-                <p class="title is-4">{{ category.name }}</p>
-              </div>
-            </div>
-            <div class="content">
-              {{ category.description }}
-            </div>
-      
-            <router-link :to="{ name: 'category', params: { category_slug: category.slug }}" class="button is-primary">View category</router-link>
-          </div>
-        </div>
+      <div class="column is-12">
+        <h2 class="is-size-2 has-text-centered">Explore These Categories</h2>
       </div>
     </div>
+
+      <div 
+        class="column is-12"
+        v-for="category in categories"
+        v-bind:key="category.id"
+        >
+        <router-link v-bind:to="category.get_absolute_url">
+          <div class>
+            <div class="column is-12">
+              <h3 class="is-size-4 has-text-left ">{{ category.name }}</h3>
+              
+            </div>
+            
+          </div>
+        </router-link>
+
+        <div
+          v-for="product in category.products"
+          v-bind:key="product.id"
+          v-bind:product="product">
+          <div>
+              <div class="box">
+                  <figure class="image mb-1">
+                      <img v-bind:src="product.get_thumbnail">
+                  </figure>
+                  <router-link v-bind:to="product.get_absolute_url">
+                  <h3 class="is-size-4">{{ product.name }}</h3>
+                  </router-link>
+                  Current Rating: {{ product.avg_rating }} / 5
+              </div>
+          </div>
+        </div>
+      </div> 
+
   </div>
 </template>
+
 <script>
-import axios from 'axios'
+import axios from 'axios';
+import { toast } from 'bulma-toast'
+
+import ProductBox from '@/components/ProductBox'
 
 export default {
-  name: 'Categories',
+  name: 'CategoriesPage',
+  components: {
+    ProductBox
+  },
   data() {
     return {
-      categories: []
+      categories: [],
+      products: [],
     }
   },
-  async mounted() {
-    await this.getCategories()
+  components: {
+
+  },
+  mounted() {
+    this.getCategoryList()
+    this.categories.forEach(category => {
+    this.getCategory(category)
+})
+
+    document.title = 'All Categories | Glasgo'
   },
   methods: {
-    async getCategories() {
-      try {
-        const response = await axios.get('/api/v1/categories/')
-        this.categories = response.data
-      } catch (error) {
-        console.log(error)
-      }
+    getCategoryList() {
+      axios 
+        .get('/api/v1/categories/')
+        .then(response => {
+          this.categories = response.data
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+
+    async getCategory(category) {
+      const categorySlug =category.slug;
+      console.log('slug', categorySlug)
+        axios
+            .get(`/api/v1/products/${categorySlug}/`)
+            .then(response => {
+                this.category = response.data
+
+            })
+            .catch(error => {
+                console.log(error)
+
+                toast({
+                    message: 'Something went wrong. Please try again.',
+                    type: 'is-danger',
+                    dismissible: true,
+                    pauseOnHover: true,
+                    duration: 2000,
+                    position: 'bottom-right',
+                })
+            })
+
+        this.$store.commit('setIsLoading', false)
     }
-  }
+
+
+
+  },
 }
 </script>
+
 <style scoped>
-.card {
-  margin-bottom: 2rem;
+.hero-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.card-image {
-  border-radius: 4px 4px 0 0;
-  overflow: hidden;
+.hero-body form {
+  width: 100%;
 }
 
-.card-content {
-  padding: 1.5rem;
+.box {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 </style>

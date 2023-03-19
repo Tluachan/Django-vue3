@@ -4,8 +4,10 @@ djackets_vue@0.1.0 /Users/Minseohye/Workspace/Django-vue/djackets_vue
 ├── @vue/cli-plugin-vuex@5.0.8
 ├── @vue/cli-service@5.0.8
 ├── axios@1.3.4
+├── bulma-toast@2.4.2
 ├── bulma@0.9.4
 ├── core-js@3.29.1
+├── jwt-decode@3.1.2
 ├── sass-loader@12.6.0
 ├── sass@1.59.3
 ├── vue-router@4.1.6
