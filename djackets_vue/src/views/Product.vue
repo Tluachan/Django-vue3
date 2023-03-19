@@ -1,0 +1,117 @@
+<template>
+    <div class="page-product">
+        <div class="columns is-multiline">
+            <div class="column is-9" style="margin-bottom: 50px;">
+                <h1 class="title">{{ product.name }}</h1>
+                <div class="button-wrapper">
+                    <button @click="goToReviewPage" class="button is-rounded" style="background-color: #FFDFD3;">Add Review</button>
+                </div>
+                <p><strong>{{ product.address }}</strong> <a :href="product.map_url" target="_blank">(Map direction)</a></p>
+                <p><strong>Phone: </strong> {{product.phone}}</p>
+                <p><strong>Description: </strong>{{ product.description }}</p>
+            </div>
+
+            <div class="column is-3">
+                <figure class="image mb-3">
+                <img :src="product.get_image" style="width: 500px; height: auto;">
+                </figure>
+            </div>
+
+            <div class="column is-12 mt-6">
+                <h2 class="review" style="font-size: 24px">Customer Reviews</h2>
+                <!--TEST-->
+                <div class="column is-12">
+                    <div>
+                        <div v-for="review in reviews" :key="review.id" class="column is-6">
+                        <div class="box">
+                            <p><strong>{{ review.user.username }}</strong></p>
+                            <!--p><strong>{{ review.product }}</strong></p>-->
+                            <p>{{ review.content }}</p>
+                            <p>Rating: {{ review.rating }}/5</p>
+                            <p>{{ review.datetime }}</p>
+                        </div>
+                        </div>
+                    </div>
+
+                </div>
+                    </div>
+
+
+        </div>         
+    </div>
+</template>
+
+<script>
+import axios from 'axios'
+import { toast } from 'bulma-toast';
+//import ReviewBox from '@/components/ReviewBox'
+
+
+export default {
+    name: 'Product',
+    components: {
+        //ReviewBox
+    },
+    data(){
+        return{
+            product:{},
+            reviews: [],
+            product_slug: '',
+        }
+    },
+    mounted(){
+        this.getProduct()
+        this.getReviewList()
+    },
+    methods: {
+        async getProduct(){
+            this.$store.commit('setIsLoading',true)
+
+            const category_slug = this.$route.params.category_slug
+            const product_slug = this.$route.params.product_slug
+
+            await axios
+                .get(`/api/v1/products/${category_slug}/${product_slug}`)
+                .then(response => {
+                    this.product = response.data
+                    document.title = this.product.name + ' | Glasgo'
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+                this.$store.commit('setIsLoading',false)
+                this.product_slug = product_slug
+        },
+        getReviewList(){
+            const product_slug = this.$route.params.product_slug
+            axios
+                .get(`/api/v1/products/${product_slug}/reviews`)
+                .then(response => {
+                    this.reviews = response.data
+                })
+                .catch(error => {
+                    console.log(error)
+                })                
+        },
+        goToReviewPage() {
+            const category_slug = this.$route.params.category_slug
+            const product_slug = this.$route.params.product_slug
+            this.$router.push({
+                name: 'Review',
+                query: { 
+                    category_slug,
+                    product_slug,
+                    product: JSON.stringify(this.product) // convert to string to pass as query param
+                    }
+            })
+        }        
+    }    
+}
+</script>
+
+<style scoped>
+.button-wrapper {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+</style>

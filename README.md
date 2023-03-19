@@ -1,1 +1,2 @@
-# Django-vue3
+# django-vue
+django-vue project for glasgo webapp
