@@ -16,8 +16,8 @@ urlpatterns = [
     path('products/<slug:product_slug>/reviews', views.ReviewList.as_view()),
     path('reviews/', ReviewViewSet.as_view({'get': 'list', 'post': 'create'}), name='review-list'),
     path('reviews/<int:pk>/', ReviewViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='review-detail'),
-    path('favorite-shops/', ReviewViewSet.as_view({'get': 'list', 'post': 'create'}), name='review-list'),
-    path('favorite-shops/<int:pk>/', ReviewViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='review-detail'),
+    path('favorite-shops/', FavoriteShopViewSet.as_view({'get': 'list', 'post': 'create'}), name='review-list'),
+    path('favorite-shops/<int:pk>/', FavoriteShopViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='review-detail'),
 ]
 
 

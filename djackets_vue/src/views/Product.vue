@@ -74,6 +74,25 @@ export default {
     methods: {
         toggleFavorite() {
             this.isFavorite = !this.isFavorite;
+            //if heart is red, favorite
+            if(this.isFavorite){
+                const product_slug = this.$route.params.product_slug
+                const user = localStorage.getItem('user')
+                const favoriteData = {
+                    product: product_slug,
+                    user: user,
+                }
+                console.log('posting favorite')
+                axios
+                    .post(`/api/v1/favorite-shops/`, favoriteData)
+                    .then(response => {
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
+
+
         },
         async getProduct(){
             this.$store.commit('setIsLoading',true)

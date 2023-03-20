@@ -1,5 +1,5 @@
 Haven't Started
-- add favorite shop method to product page
+- Make favorite shop removable and check before creating instance
 - Create shop page for owner - should be similar to review creation page
 - See all the reviews of the owner - should be easy , copy the see all the reviews of each shop
 - Need to fix unable to click any other link after putting review + reroute back to somewhere
@@ -15,3 +15,4 @@ Small stuff
 
 Done
 -Rating calculation
+- add favorite shop method to product page

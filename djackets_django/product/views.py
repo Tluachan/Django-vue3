@@ -129,18 +129,17 @@ class FavoriteShopViewSet(viewsets.ModelViewSet):
     queryset = FavoriteShop.objects.all()
 
     def create(self, request):
-        print('call favorite shop view set')
-        print('request', request.data)
         # get the product object using the slug
         product_slug = request.data.get('product')
-        #print(product_slug)
         product = get_object_or_404(Product, slug=product_slug)
-        #print('product', product)
         username = request.data.get('user')
-
         user = get_object_or_404(User, username=username)
-        print('username pass to review',user)
         # add the product object to the form data
+        #favoriteShop, created = FavoriteShop.objects.get_or_create(
+        #    product=product,user=user
+        #)
+
+
         favoriteShop = FavoriteShop.objects.create(
             product=product,
             user=user
@@ -152,6 +151,21 @@ class FavoriteShopViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save()
+
+    def destroy(self,request, pk=None):
+        if 'user' in request.data and 'product' in request.data:
+            product_slug = request.data.get('product')
+            product = get_object_or_404(Product, slug=product_slug)
+            username = request.data.get('user')
+            user = get_object_or_404(User, username=username)
+            FavoriteShop = get_object_or_404(FavoriteShop, user=user, product=product)
+        else:
+            favorite_shop = get_object_or_404(FavoriteShop, pk=pk)
+
+        favorite_shop.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)  
+
+        
 
 
 class FavoriteShopView(APIView):
