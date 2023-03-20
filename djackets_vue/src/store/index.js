@@ -6,7 +6,6 @@ export default createStore({
     token: '',
     isLoading: false,
     user: {
-      id:0,
       username: '',
     }
   },
@@ -41,6 +40,9 @@ export default createStore({
     },
     setUser(state, user) {
       state.user = user
+    },
+    removeUser(state, user) {
+      state.user = ''
     },
 
   },

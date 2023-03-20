@@ -9,6 +9,7 @@
                 <p><strong>{{ product.address }}</strong> <a :href="product.map_url" target="_blank">(Map direction)</a></p>
                 <p><strong>Phone: </strong> {{product.phone}}</p>
                 <p><strong>Description: </strong>{{ product.description }}</p>
+                <p><strong>Rating: </strong> {{ product.avg_rating ? product.avg_rating.toFixed(2) : '' }} / 5</p>
             </div>
 
             <div class="column is-3">

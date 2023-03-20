@@ -33,7 +33,7 @@
                   <router-link v-bind:to="product.get_absolute_url">
                   <h3 class="is-size-4">{{ product.name }}</h3>
                   </router-link>
-                  Current Rating: {{ product.avg_rating }} / 5
+                  Current Rating: {{ product.avg_rating ? product.avg_rating.toFixed(2) : '' }} / 5
               </div>
           </div>
         </div>

@@ -4,7 +4,7 @@
             <div class="column is-12">
                 <h1 class="title">Add Review to {{this.product.name}} </h1>
             </div>
-            <form @submit.prevent="submitForm">
+            <form @submit.prevent="submitForm" class=box>
                 <div class="field">
                     <label class="label">Rating</label>
                     <div class="control">
@@ -50,26 +50,37 @@ export default{
     }
   },
   mounted() {
-    const { category_slug, product_slug, product } = this.$route.query
-    this.product = JSON.parse(product)
-    console.log('product id', this.product.id)
     
+  },
+  watch: {
+    $route(to, from) {
+        if (to.name === 'AddReview') {
+            this.submitForm()
+        }
+    }
   },
   methods: {
     async submitForm() {
         console.log('isAuthenticated:', this.$store.state.isAuthenticated)
         this.errors = []
+
+        const category_slug = this.$route.params.category_slug
         const product_slug = this.$route.params.product_slug
-        console.log('product slug', product_slug)
+
+        console.log('category_slug', category_slug)
+        const user = localStorage.getItem('user')
+        console.log('storage user', user)
 
         const formData = {
             content: this.content,
             rating: this.rating,
-            product: product_slug
+            //pass product_slug to product attribute in review serializer
+            product: product_slug,
+            user: user
         }
 
       const token = localStorage.getItem('token')
-      console.log("print token: ",token)
+      //console.log("print token: ",token)
       await axios
         .post(`/api/v1/reviews/`, formData,)
         .then(response => {
@@ -80,7 +91,10 @@ export default{
             pauseOnHover: true,
             duration: 3000
           })
+
+          //Redirect bak to shop page
           this.$router.push({ name: 'Product', params: { category_slug, product_slug }})
+
         })
         .catch(error => {
             if (error.response) {

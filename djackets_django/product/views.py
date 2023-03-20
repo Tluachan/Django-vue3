@@ -20,18 +20,23 @@ class ReviewViewSet(viewsets.ModelViewSet):
         print('request', request.data)
         # get the product object using the slug
         product_slug = request.data.get('product')
-        print(product_slug)
+        #print(product_slug)
         product = get_object_or_404(Product, slug=product_slug)
-        print('product', product)
+        #print('product', product)
+        username = request.data.get('user')
+
+        user = get_object_or_404(User, username=username)
+        print('username pass to review',user)
         # add the product object to the form data
         review = Review.objects.create(
             product=product,
             content=request.data.get('content'),
             rating=request.data.get('rating'),
+            user=user
         )
+        product.update_rating()
         # serialize the new Review instance and return the serialized data
         serializer = ReviewSerializer(instance=review)
-        print('serializer made')
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def perform_create(self, serializer):

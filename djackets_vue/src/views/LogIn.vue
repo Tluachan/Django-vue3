@@ -68,12 +68,18 @@ export default {
                 .post("/api/v1/token/login/", formData)
                 .then(response => {
                     const token = response.data.auth_token
-
+                    //const test = response.data.username
+                    //console.log(test)
                     this.$store.commit('setToken', token)
+                    //console.log('username', this.username)
+                    this.$store.commit('setUser',this.username)
+                    //console.log('store user',this.$store.state.user)
                     
                     axios.defaults.headers.common["Authorization"] = "Token " + token
 
                     localStorage.setItem("token", token)
+                    localStorage.setItem("user", this.username)
+
                     const toPath = this.$route.query.to || '/my-account'
                     this.$router.push(toPath)
 
@@ -90,18 +96,18 @@ export default {
                         console.log(JSON.stringify(error))
                     }
                 })
-                await axios
-                    .get('/api/v1/users/me')
-                    .then(response => {
-                        this.$store.commit('setUser', {'id': response.data.id, 'username': response.data.username})
-                        localStorage.setItem('username', response.data.username)
-                        localStorage.setItem('userid', response.data.id)
+            /*await axios
+                .get('/api/v1/users/me')
+                .then(response => {
+                    this.$store.commit('setUser', {'id': response.data.id, 'username': response.data.username})
+                    localStorage.setItem('username', response.data.username)
+                    localStorage.setItem('userid', response.data.id)
 
 
-                    })
-                    .catch(error => {
-                        console.log(error)
-                    })  
+                })
+                .catch(error => {
+                    console.log(error)
+                }) */ 
 
         }
     }

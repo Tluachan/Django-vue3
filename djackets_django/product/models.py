@@ -109,9 +109,18 @@ class Product(models.Model):
 
         return thumbnail
     
-    #def cal_review(self):
-        #get all reviews, filter the one that matches self.id
-        #use average function or something (or maybe do iteration)
+    def get_rating(self):
+        reviews = Review.objects.filter(product=self)
+        if len(reviews) == 0:
+            return 0
+        total = 0
+        for review in reviews:
+            total += review.rating
+        return total / len(reviews)
+    
+    def update_rating(self):
+        self.avg_rating = self.get_rating()
+        self.save()
     
 
 class Review(models.Model):
