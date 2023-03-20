@@ -6,7 +6,7 @@
             </div>
             <form @submit.prevent="submitForm" class=box>
                 <div class="field">
-                    <label class="label">Rating</label>
+                    <label class="label">Rating (Required) </label>
                     <div class="control">
                     <div class="select">
                         <select v-model="rating">
@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label">Review</label>
+                    <label class="label">Review (Required) </label>
                     <div class="control">
                     <textarea class="textarea" v-model="content"></textarea>
                     </div>
@@ -46,7 +46,13 @@ export default{
       product: {},
       content: '',
       rating: '',
-      errors: []
+      errors: [],
+      favorite: false,
+    }
+  },
+  computed: {
+    isFavorite() {
+        return this.favorite
     }
   },
   mounted() {
@@ -64,13 +70,25 @@ export default{
         console.log('isAuthenticated:', this.$store.state.isAuthenticated)
         this.errors = []
 
+        if(!this.rating){
+            this.errors.push('You need to select rating')
+        }
+        if(this.content === ''){
+            this.errors.push('You need to input the review')
+
+        }
+
         const category_slug = this.$route.params.category_slug
         const product_slug = this.$route.params.product_slug
 
-        console.log('category_slug', category_slug)
+        //console.log('category_slug', category_slug)
         const user = localStorage.getItem('user')
-        console.log('storage user', user)
+        //console.log('storage user', user)
+        console.log('print outside')
+        //const token = localStorage.getItem('token')
+        //console.log("print token: ",token)
 
+        if(!this.errors.length){
         const formData = {
             content: this.content,
             rating: this.rating,
@@ -79,8 +97,6 @@ export default{
             user: user
         }
 
-      const token = localStorage.getItem('token')
-      //console.log("print token: ",token)
       await axios
         .post(`/api/v1/reviews/`, formData,)
         .then(response => {
@@ -102,13 +118,22 @@ export default{
                     this.errors.push(`${property}: ${error.response.data[property]}`)
                 }
                 console.log(JSON.stringify(error.response.data))
+                toast({
+                    message: 'Something went wrong. Please try again',
+                    type: 'is-danger',
+                    dismissible: true,
+                    pauseOnHover: true,
+                    duration: 3000
+                })
             } else if (error.message) {
                 this.errors.push('Something went wrong. Please try again')
                 console.log(JSON.stringify(error))
             }
         })
+        }
       
     },
   },
+  //above is method bracket
 }
 </script>

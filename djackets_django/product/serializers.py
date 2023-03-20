@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Category, Product, Review
+from .models import Category, Product, Review, FavoriteShop
 
 from djoser.serializers import UserCreateSerializer
 from django.contrib.auth.models import User
@@ -94,3 +94,20 @@ class CategorySerializer(serializers.ModelSerializer):
         )
 
 
+class FavoriteShopSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    product = ProductForReviewSerializer(read_only=True)
+
+    class Meta:
+        model = FavoriteShop
+        read_only_fields =(
+            'user',
+            'product',
+        )
+        fields = (
+            'id',
+            'user',
+            'product',
+        )
+    def create(self, validated_data):
+        return FavoriteShop.objects.create(**validated_data)

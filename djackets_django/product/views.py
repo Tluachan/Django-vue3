@@ -2,6 +2,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from django.db import transaction
 
 from rest_framework import generics, viewsets
 from rest_framework.views import APIView
@@ -9,14 +10,15 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 
-from .models import Product, Category, Review
-from .serializers import ProductSerializer, CategorySerializer, ReviewSerializer, UserSerializer
+from .models import Product, Category, Review, FavoriteShop
+from .serializers import ProductSerializer, CategorySerializer, ReviewSerializer, UserSerializer, FavoriteShopSerializer
+from .Msg import Msg
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     queryset = Review.objects.all()
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request):
         print('request', request.data)
         # get the product object using the slug
         product_slug = request.data.get('product')
@@ -120,3 +122,89 @@ def search(request):
         return Response(serializer.data)
     else:
         return Response({"products": []})
+
+
+class FavoriteShopViewSet(viewsets.ModelViewSet):
+    serializer_class = FavoriteShopSerializer
+    queryset = FavoriteShop.objects.all()
+
+    def create(self, request):
+        print('call favorite shop view set')
+        print('request', request.data)
+        # get the product object using the slug
+        product_slug = request.data.get('product')
+        #print(product_slug)
+        product = get_object_or_404(Product, slug=product_slug)
+        #print('product', product)
+        username = request.data.get('user')
+
+        user = get_object_or_404(User, username=username)
+        print('username pass to review',user)
+        # add the product object to the form data
+        favoriteShop = FavoriteShop.objects.create(
+            product=product,
+            user=user
+        )
+        product.update_favorite_count()
+        # serialize the new Review instance and return the serialized data
+        serializer = FavoriteShopSerializer(instance=favoriteShop)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+
+class FavoriteShopView(APIView):
+    # get all favorite shop list
+    def get(self, request):
+        print(request.data)
+
+        if 'user' not in request.data and 'product' not in request.data:
+            return Response("user_id or shop_id is required.", status=status.HTTP_400_BAD_REQUEST)
+        
+        if 'user' in request.data:
+            username = request.data.get('user')
+            user = User.objects.get(username=username)
+            favorite_shops = FavoriteShop.objects.filter(user=user)
+        
+        if 'product' in request.data:
+            product_slug = request.data.get('product')
+            product = Product.objects.get(slug=product_slug)
+            favorite_shops = FavoriteShop.objects.filter(product=product)
+
+        serializer = FavoriteShopSerializer(favorite_shops, many=True)
+        return Msg(data = serializer.data).response()
+
+    # add a new favorite shop
+    @transaction.atomic
+    def post(self, request):
+        serializer = FavoriteShopSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+            # update shop favorite count
+            product_slug = request.data['product']
+            product = Product.objects.get(slug=product_slug)
+            product.update_favorite_count()
+
+            return Msg(data=serializer.data).response()
+        return Msg(code=400, msg=serializer.errors).response()
+
+    # delete a favorite shop
+    @transaction.atomic
+    def delete(self, request):
+        if 'user_id' not in request.data or 'shop_id' not in request.data:
+            return Response("user_id and shop_id are required.", status=status.HTTP_400_BAD_REQUEST)
+        
+        user_id = request.data['user_id']
+        shop_id = request.data['shop_id']
+        favorite_shop = FavoriteShop.objects.filter(user_id=user_id, shop_id=shop_id)
+        if not favorite_shop:
+            return Msg(code = status.HTTP_404_NOT_FOUND,msg="The favorite shop is not exists.").response()
+        favorite_shop.delete()
+
+        # update shop favorite count
+        shop = Shop.objects.get(id=shop_id)
+        shop.update_favorite_count()
+        
+        return Msg(data="Delete successfully").response()

@@ -70,9 +70,10 @@ class Product(models.Model):
     map_url = models.URLField(blank=True)
     avg_rating = models.FloatField(blank=True)
     owner = models.ForeignKey(User, blank=True,null=True,on_delete=models.CASCADE)
+    favorite_count= models.IntegerField(blank=True,null=True)
 
     class Meta:
-        ordering = ('-date_added',)
+        ordering = ('-avg_rating',)
     
     def __str__(self):
         return self.name
@@ -121,15 +122,28 @@ class Product(models.Model):
     def update_rating(self):
         self.avg_rating = self.get_rating()
         self.save()
+
+    def update_favorite_count(self):
+        self.favorite_count = FavoriteShop.objects.filter(product=self).count()
+        self.save()
     
 
 class Review(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User,blank=True,null=True,on_delete=models.CASCADE,)
-    product = models.ForeignKey(Product,blank=True,null=True, on_delete=models.CASCADE)
-    content = models.TextField()
-    rating = models.FloatField()
+    user = models.ForeignKey(User,on_delete=models.CASCADE,)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    content = models.TextField(default='')
+    rating = models.FloatField(default=0.0)
     datetime = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.content
+
+
+class FavoriteShop(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User,blank=True,null=True,on_delete=models.CASCADE,)
+    product = models.ForeignKey(Product,blank=True,null=True,on_delete=models.CASCADE,)
+
+    def __str__(self):
+        return self.user + ":" + self.shop

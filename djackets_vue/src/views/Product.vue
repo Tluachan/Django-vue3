@@ -2,7 +2,10 @@
     <div class="page-product">
         <div class="columns is-multiline">
             <div class="column is-9" style="margin-bottom: 50px;">
-                <h1 class="title">{{ product.name }}</h1>
+                <div class="is-flex is-justify-content-space-between">
+                    <h1 class="title">{{ product.name }}</h1>
+                    <i class="fa fa-heart" :class="{ 'favorite': isFavorite }" @click="toggleFavorite"></i>
+                </div>
                 <div class="button-wrapper">
                     <button @click="goToReviewPage" class="button is-rounded" style="background-color: #FFDFD3;">Add Review</button>
                 </div>
@@ -58,6 +61,10 @@ export default {
             product:{},
             reviews: [],
             product_slug: '',
+            //favorite status for product
+            isFavorite: false,
+            //button status
+            favorite: false,
         }
     },
     mounted(){
@@ -65,6 +72,9 @@ export default {
         this.getReviewList()
     },
     methods: {
+        toggleFavorite() {
+            this.isFavorite = !this.isFavorite;
+        },
         async getProduct(){
             this.$store.commit('setIsLoading',true)
 
@@ -114,5 +124,15 @@ export default {
 .button-wrapper {
     margin-top: 10px;
     margin-bottom: 10px;
+}
+.favorite {
+  color: red;
+}
+.product-header {
+  display: flex;
+  justify-content: space-between;
+}
+.fa-heart{
+    font-size: 24px
 }
 </style>
