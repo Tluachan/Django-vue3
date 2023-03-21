@@ -95,18 +95,20 @@ export default {
                         console.log(JSON.stringify(error))
                     }
                 })
-            /*await axios
+            await axios
                 .get('/api/v1/users/me')
                 .then(response => {
-                    this.$store.commit('setUser', {'id': response.data.id, 'username': response.data.username})
-                    localStorage.setItem('username', response.data.username)
-                    localStorage.setItem('userid', response.data.id)
+                    const test = response.data
+                    console.log('response', test)
+                    //this.$store.commit('setUser', {'id': response.data.id, 'username': response.data.username})
+                    //localStorage.setItem('username', response.data.username)
+                    //localStorage.setItem('userid', response.data.id)
 
 
                 })
                 .catch(error => {
                     console.log(error)
-                }) */ 
+                }) 
 
         }
     }

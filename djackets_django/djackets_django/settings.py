@@ -50,6 +50,13 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -141,5 +148,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DJOSER = {
     'SERIALIZERS': {
         'user_create': 'product.serializers.CustomUserCreateSerializer',
+        'current_user': 'product.serializers.CustomUserSerializer',
     },
 }
