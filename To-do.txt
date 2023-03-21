@@ -17,8 +17,6 @@ django-admin startproject djackets_django
 python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser
-- install node.js
-conda install -c conda-forge nodejs
 - install vue
 npm install -g @vue/cli
 if does not work due to permission, do

@@ -80,8 +80,7 @@ export default {
   },
   beforeCreate() {
     this.$store.commit('initializeStore')
-    console.log(this.$store.state.user)
-
+    console.log('user at initialize', this.$store.state.user)
     const token = this.$store.state.token
 
     if (token) {

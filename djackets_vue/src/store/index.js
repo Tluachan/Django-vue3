@@ -15,8 +15,8 @@ export default createStore({
       if (localStorage.getItem('token')) {
           state.token = localStorage.getItem('token')
           state.isAuthenticated = true
-          state.user.username = localStorage.getItem('username')
-          state.user.id = localStorage.getItem('userid')
+          state.user.username = localStorage.getItem('user')
+          //state.user.id = localStorage.getItem('userid')
       } else {
           state.token = ''
           state.isAuthenticated = false
@@ -30,8 +30,8 @@ export default createStore({
     setToken(state, token) {
         state.token = token
         state.isAuthenticated = true
-        console.log('isAuthenticate',state.isAuthenticated)
-        console.log('token set:', token)
+        //console.log('isAuthenticate',state.isAuthenticated)
+        //console.log('token set:', token)
 
     },  
     removeToken(state) {

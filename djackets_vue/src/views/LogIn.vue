@@ -51,13 +51,14 @@ export default {
         }
     },
     mounted() {
-        document.title = 'Log In | Djackets'
+        document.title = 'Log In | Glasgo'
     },
     methods: {
         async submitForm() {
             axios.defaults.headers.common["Authorization"] = ""
 
             localStorage.removeItem("token")
+            localStorage.removeItem('user')
 
             const formData = {
                 username: this.username,
@@ -68,10 +69,8 @@ export default {
                 .post("/api/v1/token/login/", formData)
                 .then(response => {
                     const token = response.data.auth_token
-                    //const test = response.data.username
-                    //console.log(test)
                     this.$store.commit('setToken', token)
-                    //console.log('username', this.username)
+
                     this.$store.commit('setUser',this.username)
                     //console.log('store user',this.$store.state.user)
                     
