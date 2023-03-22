@@ -1,27 +1,45 @@
 <template>
-    <div class="page-my-account">
-        <div class="columns is-multiline">
-            <div class="column is-12">
-                <h1 class="title">My account</h1>
+
+        <div class="page-my-account">
+            <div class="columns is-multiline">
+                <div class="column is-12">
+                    <h1 class="title">My account</h1>
+                </div>
             </div>
 
-            <div class="column is-12">
-                <button @click="logout()" class="button is-danger">Log out</button>
-            </div>
 
-            <hr>
-<!--this is for each user
-            <div class="column is-12">
-                <h2 class="subtitle">My orders</h2>
+                <h2 style="font-size: 24px;">Your Reviews</h2>
+                <div 
+                    v-for="review in reviews" 
+                    v-bind:key="review.id"
+                    v-bind:review="review" 
+                    class="column is-6">
+                    <div class="box has-background-white" >
+                        <router-link v-bind:to="review.product.get_absolute_url">
+                        <p><strong>{{ review.product.name }}</strong></p>
+                        </router-link>
+                        <!--p><strong>{{ review.product }}</strong></p>-->
+                        <p><strong>Content: </strong>{{ review.content }}</p>
+                        <p><strong>Rating: </strong>{{ review.rating }}/5</p>
+                        <p>Reviewed on: {{ review.datetime }}</p>
+                    </div>
+                </div>
 
-                <OrderSummary
-                    v-for="order in orders"
-                    v-bind:key="order.id"
-                    v-bind:order="order" />
-            </div>
-            -->
+                <h2 style="font-size: 24px;">Your Favorite Shops</h2>
+                <div class="box">
+                <div 
+                    v-for="favshop in favshops" 
+                    v-bind:key="favshop.product"
+                    v-bind:favshop="fav-shop">
+                        <router-link v-bind:to="favshop.product.get_absolute_url">
+                        <p><strong>{{ favshop.product.name }}</strong></p>
+                        </router-link>
+                </div>    
+        </div>            
+
+
         </div>
-    </div>
+
 </template>
 
 <script>
@@ -29,19 +47,47 @@ import axios from 'axios'
 
 export default ({
     name: 'MyAccount', 
+    data(){
+        return {
+            reviews: [],
+            favshops: [],
+            fav:{},
+            shop: {},
+
+    }
+    },
+    mounted(){
+        this.getUserAllReviewList()
+        this.getUserFavoriteShopList()
+    },
     methods: {
-        logout() {
-            axios.defaults.headers.common["Authorization"] = ""
+        getUserAllReviewList(){
+            const user = localStorage.getItem('user')
+            console.log('username: ',user)
+            axios
+                .get(`/api/v1/reviews/user/${user}/`)
+                .then(response =>{
+                    console.log(response.data)
+                    this.reviews = response.data
+                })
+                .catch(error => {
+                    console.log(error)
+                })
 
-            localStorage.removeItem("token")
-            localStorage.removeItem("user")
+        },
 
-            this.$store.commit('removeToken')
-            this.$store.commit('removeUser')
-
-            this.$router.push('/')
-        }
-        
+        getUserFavoriteShopList(){
+            axios
+                .get(`/api/v1/favorite-shops`)
+                .then(response =>{
+                    console.log(response.data)
+                    this.favshops = response.data
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        },
+    
     },
 })
 </script>

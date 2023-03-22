@@ -78,8 +78,6 @@ export default {
         if (isAuthenticated) {
             const product_slug = this.$route.params.product_slug
             const user = localStorage.getItem('user')
-            const favoriteData = { product: product_slug, user: user }
-            console.log(favoriteData)
             axios
                 .get(`/api/v1/favorite-shops/product/${product_slug}/user/${user}`)
                 .then(response => {

@@ -41,7 +41,9 @@
           <div class="navbar-item">
             <div class="buttons">
               <template v-if="$store.state.isAuthenticated">
-                <router-link to="/my-account" class="button is-light">My account</router-link>
+
+                <router-link to="/my-account" class="button is-info is-light">My account</router-link>
+                <button @click="logout()" class="button is-danger is-dark">Log out</button>
               </template>
 
               <template v-else>
@@ -92,8 +94,20 @@ export default {
   mounted() {
     this.cart = this.$store.state.cart
   },
-  computed: {
-  }
+  methods: {
+    logout() {
+        axios.defaults.headers.common["Authorization"] = ""
+
+        localStorage.removeItem("token")
+        localStorage.removeItem("user")
+
+        this.$store.commit('removeToken')
+        this.$store.commit('removeUser')
+
+        this.$router.push('/')
+    }
+    
+},
 }
 </script>
 

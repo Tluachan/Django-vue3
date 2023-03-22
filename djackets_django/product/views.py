@@ -57,6 +57,23 @@ class ReviewList(APIView):
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
     
+class UserAllReviewList(APIView):
+    def get_object(self, username):
+        user = User.objects.get(username=username)
+        print(user)
+        try:
+            return Review.objects.filter(user=user)
+        except Review.DoesNotExist:
+            raise Http404('This user has no review')
+    
+    def get(self, request, username, format=None):
+        print('user all review list')
+        print('username', username)
+        reviews = self.get_object(username)
+        print(reviews)
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
+    
 class UserDetail(APIView):
     def get_object(self, pk):
         try:
@@ -177,6 +194,12 @@ class FavoriteShopViewSet(viewsets.ModelViewSet):
         favorite_shop.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def list(self, request):
+        user = request.user
+        favorite_shops = FavoriteShop.objects.filter(user=user)
+        serializer = self.serializer_class(favorite_shops, many=True)
+        return Response(serializer.data)
+    
 class FavoriteShopView(APIView):
     
     def delete(self, request):
@@ -211,71 +234,12 @@ class FavoriteShopView(APIView):
             raise NotFound("This shop has not been favorited.")
     
     def get(self, request, product_slug, username, format=None):
-        print('call get')
-        print(request.data)
-        print(product_slug)
-        print(username)
+  
         try:
             favorite_shop = self.get_object(product_slug,username)
-            print('favorite shop from get object:', favorite_shop)
             serializer = FavoriteShopSerializer(favorite_shop)
             return Response(serializer.data)
         except NotFound as e:
             return Response({'detail': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
-
-class FavoriteShopViewnotused(APIView):
-    # get all favorite shop list
-    def get(self, request):
-        print(request.data)
-
-        if 'user' not in request.data and 'product' not in request.data:
-            return Response("user_id or shop_id is required.", status=status.HTTP_400_BAD_REQUEST)
-        
-        if 'user' in request.data:
-            username = request.data.get('user')
-            user = User.objects.get(username=username)
-            favorite_shops = FavoriteShop.objects.filter(user=user)
-        
-        if 'product' in request.data:
-            product_slug = request.data.get('product')
-            product = Product.objects.get(slug=product_slug)
-            favorite_shops = FavoriteShop.objects.filter(product=product)
-
-        serializer = FavoriteShopSerializer(favorite_shops, many=True)
-        return Msg(data = serializer.data).response()
-
-    # add a new favorite shop
-    @transaction.atomic
-    def post(self, request):
-        serializer = FavoriteShopSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-
-            # update shop favorite count
-            product_slug = request.data['product']
-            product = Product.objects.get(slug=product_slug)
-            product.update_favorite_count()
-
-            return Msg(data=serializer.data).response()
-        return Msg(code=400, msg=serializer.errors).response()
-
-    # delete a favorite shop
-    @transaction.atomic
-    def delete(self, request):
-        if 'user_id' not in request.data or 'shop_id' not in request.data:
-            return Response("user_id and shop_id are required.", status=status.HTTP_400_BAD_REQUEST)
-        
-        user_id = request.data['user_id']
-        shop_id = request.data['shop_id']
-        favorite_shop = FavoriteShop.objects.filter(user_id=user_id, shop_id=shop_id)
-        if not favorite_shop:
-            return Msg(code = status.HTTP_404_NOT_FOUND,msg="The favorite shop is not exists.").response()
-        favorite_shop.delete()
-
-        # update shop favorite count
-        shop = Shop.objects.get(id=shop_id)
-        shop.update_favorite_count()
-        
-        return Msg(data="Delete successfully").response()
 

@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from product import views
-from .views import ReviewViewSet, FavoriteShopViewSet, FavoriteShopView
+from .views import ReviewViewSet, FavoriteShopViewSet, FavoriteShopView, UserAllReviewList
 
 #router = DefaultRouter()
 #router.register('favorite-shops', FavoriteShopViewSet, basename='favorite-shops')
@@ -20,6 +20,7 @@ urlpatterns = [
     path('favorite-shops/<int:pk>/', FavoriteShopViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='favorite-detail'),
     path('favorite-shops/delete/', FavoriteShopView.as_view(), name='favorite-shop-delete'),
     path('favorite-shops/product/<slug:product_slug>/user/<slug:username>/', FavoriteShopView.as_view(), name='favorite-shop-get'),
+    path('reviews/user/<slug:username>/', UserAllReviewList.as_view(), name='user_review_list'),
 ]
 
 

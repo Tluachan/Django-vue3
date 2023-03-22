@@ -5,6 +5,10 @@ from .models import Category, Product, Review, FavoriteShop
 from djoser.serializers import UserCreateSerializer,UserSerializer
 from django.contrib.auth.models import User
 
+class CustomDateTimeField(serializers.DateTimeField):
+    def to_representation(self, value):
+        return value.strftime('%d-%m-%Y %H:%M')
+    
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -52,6 +56,8 @@ class ProductForReviewSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     product = ProductForReviewSerializer(read_only=True)
+    datetime = CustomDateTimeField()
+
     class Meta:
         model = Review
         read_only_fields = (
@@ -120,3 +126,5 @@ class FavoriteShopSerializer(serializers.ModelSerializer):
         )
     def create(self, validated_data):
         return FavoriteShop.objects.create(**validated_data)
+    
+
