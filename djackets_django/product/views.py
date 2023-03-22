@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 
 from .models import Product, Category, Review, FavoriteShop
 from .serializers import ProductSerializer, CategorySerializer, ReviewSerializer, UserSerializer, FavoriteShopSerializer
@@ -176,7 +177,7 @@ class FavoriteShopViewSet(viewsets.ModelViewSet):
         favorite_shop.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class FavoriteShopDeleteView(APIView):
+class FavoriteShopView(APIView):
     
     def delete(self, request):
         print('call delete')
@@ -198,23 +199,32 @@ class FavoriteShopDeleteView(APIView):
         favorite_shop.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-    def get(self, request):
-        product_slug = request.data.get('product')
+    def get_object(self, product_slug,username):
+        print('call get object')
         product = get_object_or_404(Product, slug=product_slug)
-        username = request.data.get('user')
         user = get_object_or_404(User, username=username)
-
-        if 'user' not in request.data:
-            return Response("User is not logged in", status=status.HTTP_400_BAD_REQUEST)
-               
         try:
             favorite_shop = FavoriteShop.objects.get(product=product, user=user)
+            print(favorite_shop)
+            return favorite_shop
         except FavoriteShop.DoesNotExist:
-            return Response({'error': 'FavoriteShop not found for this user and product.'}, status=status.HTTP_404_NOT_FOUND)
+            raise NotFound("This shop has not been favorited.")
+    
+    def get(self, request, product_slug, username, format=None):
+        print('call get')
+        print(request.data)
+        print(product_slug)
+        print(username)
+        try:
+            favorite_shop = self.get_object(product_slug,username)
+            print('favorite shop from get object:', favorite_shop)
+            serializer = FavoriteShopSerializer(favorite_shop)
+            return Response(serializer.data)
+        except NotFound as e:
+            return Response({'detail': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
-        return Response({'pk': favorite_shop.pk}, status=status.HTTP_200_OK)
 
-class FavoriteShopView(APIView):
+class FavoriteShopViewnotused(APIView):
     # get all favorite shop list
     def get(self, request):
         print(request.data)
@@ -268,3 +278,4 @@ class FavoriteShopView(APIView):
         shop.update_favorite_count()
         
         return Msg(data="Delete successfully").response()
+

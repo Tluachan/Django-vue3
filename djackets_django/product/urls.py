@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from product import views
-from .views import ReviewViewSet, FavoriteShopViewSet, FavoriteShopDeleteView
+from .views import ReviewViewSet, FavoriteShopViewSet, FavoriteShopView
 
 #router = DefaultRouter()
 #router.register('favorite-shops', FavoriteShopViewSet, basename='favorite-shops')
@@ -16,9 +16,10 @@ urlpatterns = [
     path('products/<slug:product_slug>/reviews', views.ReviewList.as_view()),
     path('reviews/', ReviewViewSet.as_view({'get': 'list', 'post': 'create'}), name='review-list'),
     path('reviews/<int:pk>/', ReviewViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='review-detail'),
-    path('favorite-shops/', FavoriteShopViewSet.as_view({'get': 'list', 'post': 'create', 'destroy' : 'destroy'}), name='favorite-list'),
+    path('favorite-shops/', FavoriteShopViewSet.as_view({'get': 'list', 'post': 'create'}), name='favorite-list'),
     path('favorite-shops/<int:pk>/', FavoriteShopViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='favorite-detail'),
-    path('favorite-shops/delete/', FavoriteShopDeleteView.as_view(), name='favorite-shop-delete'),
+    path('favorite-shops/delete/', FavoriteShopView.as_view(), name='favorite-shop-delete'),
+    path('favorite-shops/product/<slug:product_slug>/user/<slug:username>/', FavoriteShopView.as_view(), name='favorite-shop-get'),
 ]
 
 

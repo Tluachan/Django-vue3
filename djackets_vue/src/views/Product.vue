@@ -4,7 +4,9 @@
             <div class="column is-9" style="margin-bottom: 50px;">
                 <div class="is-flex is-justify-content-space-between">
                     <h1 class="title">{{ product.name }}</h1>
-                    <i class="fa fa-heart" :class="{ 'favorite': isFavorite }" @click="toggleFavorite"></i>
+                    <template v-if="$store.state.isAuthenticated">
+                        <i class="fa fa-heart" :class="{ 'favorite': isFavorite }" @click="toggleFavorite"></i>
+                    </template>
                 </div>
                 <div class="button-wrapper">
                     <button @click="goToReviewPage" class="button is-rounded" style="background-color: #FFDFD3;">Add Review</button>
@@ -68,6 +70,34 @@ export default {
     mounted(){
         this.getProduct()
         this.getReviewList()
+
+        // Check if user is authenticated and get favorite status
+        const isAuthenticated = this.$store.state.isAuthenticated
+        console.log('authentication: ', isAuthenticated)
+
+        if (isAuthenticated) {
+            const product_slug = this.$route.params.product_slug
+            const user = localStorage.getItem('user')
+            const favoriteData = { product: product_slug, user: user }
+            console.log(favoriteData)
+            axios
+                .get(`/api/v1/favorite-shops/product/${product_slug}/user/${user}`)
+                .then(response => {
+                    console.log('response favorite',response.data)
+                    const id = response.data.id
+                    console.log('response id',id)
+                    if (id !== null) {
+                        console.log('response data exists')
+                        this.isFavorite = true
+                        console.log('print isfavorite',this.isFavorite)
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                    if (error.response.status === 404) {
+                        console.log('Favorite shop not found!')}
+                })
+    }
     },
     methods: {
         toggleFavorite() {
@@ -92,7 +122,7 @@ export default {
             }
 
 
-                        //if heart is black, remove favorite
+            //if heart is black, remove favorite
             if(!this.isFavorite){
                 const favoriteData = {
                     product: product_slug,
