@@ -130,6 +130,8 @@ class FavoriteShopViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         # get the product object using the slug
+        #print('create')
+        #print(request.data)
         product_slug = request.data.get('product')
         product = get_object_or_404(Product, slug=product_slug)
         username = request.data.get('user')
@@ -153,21 +155,64 @@ class FavoriteShopViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save()
 
-    def destroy(self,request, pk=None):
+    def destroy(self, request, pk=None):
+        print('call destroy')
+        print(request.data)
         if 'user' in request.data and 'product' in request.data:
+            print('if check')
             product_slug = request.data.get('product')
             product = get_object_or_404(Product, slug=product_slug)
             username = request.data.get('user')
             user = get_object_or_404(User, username=username)
-            FavoriteShop = get_object_or_404(FavoriteShop, user=user, product=product)
+
+            try:
+                favorite_shop = FavoriteShop.objects.get(user=user, product=product)
+            except FavoriteShop.DoesNotExist:
+                # if the FavoriteShop object doesn't exist, return a response with status code 404
+                return Response(status=status.HTTP_404_NOT_FOUND)
         else:
             favorite_shop = get_object_or_404(FavoriteShop, pk=pk)
 
         favorite_shop.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)  
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-        
+class FavoriteShopDeleteView(APIView):
+    
+    def delete(self, request):
+        print('call delete')
+        print(request.data)
+        # get the user and product from the request data
+        product_slug = request.data.get('product')
+        product = get_object_or_404(Product, slug=product_slug)
+        username = request.data.get('user')
+        user = get_object_or_404(User, username=username)
 
+        # try to retrieve the FavoriteShop object using the user and product
+        try:
+            favorite_shop = FavoriteShop.objects.get(user=user, product=product)
+        except FavoriteShop.DoesNotExist:
+            # if the FavoriteShop object doesn't exist, return a response with status code 404
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        # delete the FavoriteShop object and return a response with status code 204
+        favorite_shop.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    def get(self, request):
+        product_slug = request.data.get('product')
+        product = get_object_or_404(Product, slug=product_slug)
+        username = request.data.get('user')
+        user = get_object_or_404(User, username=username)
+
+        if 'user' not in request.data:
+            return Response("User is not logged in", status=status.HTTP_400_BAD_REQUEST)
+               
+        try:
+            favorite_shop = FavoriteShop.objects.get(product=product, user=user)
+        except FavoriteShop.DoesNotExist:
+            return Response({'error': 'FavoriteShop not found for this user and product.'}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response({'pk': favorite_shop.pk}, status=status.HTTP_200_OK)
 
 class FavoriteShopView(APIView):
     # get all favorite shop list

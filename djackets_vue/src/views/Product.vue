@@ -48,8 +48,6 @@
 <script>
 import axios from 'axios'
 import { toast } from 'bulma-toast';
-//import ReviewBox from '@/components/ReviewBox'
-
 
 export default {
     name: 'Product',
@@ -74,14 +72,15 @@ export default {
     methods: {
         toggleFavorite() {
             this.isFavorite = !this.isFavorite;
+            const product_slug = this.$route.params.product_slug
+            const user = localStorage.getItem('user')
+          
             //if heart is red, favorite
             if(this.isFavorite){
-                const product_slug = this.$route.params.product_slug
-                const user = localStorage.getItem('user')
                 const favoriteData = {
                     product: product_slug,
                     user: user,
-                }
+                }                        
                 console.log('posting favorite')
                 axios
                     .post(`/api/v1/favorite-shops/`, favoriteData)
@@ -89,6 +88,30 @@ export default {
                     })
                     .catch(error => {
                         console.log(error)
+                    })
+            }
+
+
+                        //if heart is black, remove favorite
+            if(!this.isFavorite){
+                const favoriteData = {
+                    product: product_slug,
+                    user: user,
+                }    
+                console.log('deleting favorite')
+                console.log('favorite data to delete', favoriteData)
+                axios
+                    .delete(`/api/v1/favorite-shops/delete/`, {data: {user: user,product: product_slug}})
+                    .then(response => {
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        // handle error response
+                        if (error.response.status === 404) {
+                        console.error('Favorite shop not found!');
+                        } else {
+                        console.error('Error deleting favorite shop:', error);
+                        }
                     })
             }
 
