@@ -134,17 +134,18 @@ class FavoriteShopViewSet(viewsets.ModelViewSet):
         product = get_object_or_404(Product, slug=product_slug)
         username = request.data.get('user')
         user = get_object_or_404(User, username=username)
-        # add the product object to the form data
-        #favoriteShop, created = FavoriteShop.objects.get_or_create(
-        #    product=product,user=user
-        #)
 
-
-        favoriteShop = FavoriteShop.objects.create(
-            product=product,
-            user=user
+        favoriteShop, created = FavoriteShop.objects.get_or_create(
+            product=product,user=user
         )
-        product.update_favorite_count()
+
+        #favoriteShop = FavoriteShop.objects.create(
+        #    product=product,
+        #    user=user
+        #)
+        if created:
+            product.update_favorite_count()
+            
         # serialize the new Review instance and return the serialized data
         serializer = FavoriteShopSerializer(instance=favoriteShop)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

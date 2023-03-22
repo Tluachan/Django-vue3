@@ -146,4 +146,4 @@ class FavoriteShop(models.Model):
     product = models.ForeignKey(Product,blank=True,null=True,on_delete=models.CASCADE,)
 
     def __str__(self):
-        return self.user + ":" + self.shop
+        return self.user.first_name + ":" + self.product.name
