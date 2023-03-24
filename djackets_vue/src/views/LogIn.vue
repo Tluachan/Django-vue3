@@ -71,18 +71,11 @@ export default {
                     const token = response.data.auth_token
                     this.$store.commit('setToken', token)
 
-
-                    //this.$store.commit('setUser',this.username)
-                    //console.log('store user',this.$store.state.user)
                     
                     axios.defaults.headers.common["Authorization"] = "Token " + token
 
                     localStorage.setItem("token", token)
                     localStorage.setItem("user", this.username)
-
-                    const toPath = this.$route.query.to || '/my-account'
-                    this.$router.push(toPath)
-
 
                 })
                 .catch(error => {
@@ -99,13 +92,17 @@ export default {
             await axios
                 .get('/api/v1/users/me')
                 .then(response => {
-                    const test = response.data
-                    console.log('response', test)
-                    this.$store.commit('setUser',response.data.username)
+                    const userData = response.data
+                    //console.log('response', userData)
+                    //Set state user information
+                    this.$store.commit('setUser',{username: response.data.username, shop_owner:response.data.is_staff})
+                    //Set local storage
                     localStorage.setItem('username', response.data.username)
-                    console.log('set user name from djoser')
-                    console.log(localStorage.getItem('username'))
-                    //localStorage.setItem('userid', response.data.id)
+                    localStorage.setItem('shop_owner',response.data.is_staff)
+                    console.log('print state user',this.$store.state.user)
+
+                    const toPath = this.$route.query.to || '/my-account'
+                    this.$router.push(toPath)
 
 
                 })

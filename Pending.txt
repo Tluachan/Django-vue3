@@ -1,7 +1,9 @@
 Haven't Started
-
+- Edit profile
 - Create shop page for owner - should be similar to review creation page
 - Make the review shows 10 latest review
+- Make review deletable from my account
+
 
 
 Big Stuff

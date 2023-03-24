@@ -11,6 +11,7 @@ import LogIn from '../views/LogIn.vue'
 import MyAccount from '../views/MyAccount.vue'
 import ShowCategory from '../views/ShowCategory.vue'
 import Review from '../views/AddReview.vue'
+import ShopOwner from '../views/ShopOwner.vue'
 
 const routes = [
   {
@@ -76,6 +77,15 @@ const routes = [
     name: 'Review',
     component: Review,
     props: true,
+    meta: {
+      requireLogin: true
+    }
+  },
+
+  {
+    path: '/user/shop-owner-view',
+    name: 'ShopOwner',
+    component: ShopOwner,
     meta: {
       requireLogin: true
     }

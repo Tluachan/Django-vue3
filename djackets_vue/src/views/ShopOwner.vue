@@ -3,13 +3,13 @@
         <div class="page-my-account">
             <div class="columns is-multiline">
                 <div class="column is-10">
-                    <h1 class="title">My account</h1>
+                    <h1 class="title">Shop Owner Account</h1>
                 </div>
                 <template v-if="$store.state.user.shop_owner">
-                    <router-link to="/user/shop-owner-view">
+                    <router-link to="/my-account">
                 <div calss="column is-1">
                     <button class="button is-light">
-                    Shop Owner View
+                    User View
                     </button>
                 </div> 
                 </router-link>

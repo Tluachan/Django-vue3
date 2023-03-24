@@ -93,6 +93,9 @@ class ProductSerializer(serializers.ModelSerializer):
             "get_thumbnail",
             "reviews"
         )
+    
+    def create(self, validated_data):
+        return Product.objects.create(**validated_data)
 
 class CategorySerializer(serializers.ModelSerializer):
     products = ProductSerializer(many=True)
