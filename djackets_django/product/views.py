@@ -119,6 +119,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         print('request',request.data)
+        print('user request create shop',request.user)
         username = request.data.get('owner')
         user = get_object_or_404(User, username=username)
         print('check get user',user)
@@ -159,6 +160,17 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(products, many=True)
         return Response(serializer.data)
     
+    def destroy(self,request,pk=None):
+        print('enter destroy')
+        print('delete shop', request.data)
+        try:
+            product = Product.objects.get(pk=pk)
+        except Product.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+            
 
 class CategoryDetail(APIView):
     def get_object(self, category_slug):
@@ -222,7 +234,6 @@ class FavoriteShopViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     def destroy(self, request, pk=None):
-        print('call destroy')
         print(request.data)
         if 'user' in request.data and 'product' in request.data:
             print('if check')

@@ -1,22 +1,20 @@
 Haven't Started
-- Edit profile
-- Create shop page for owner - should be similar to review creation page
+- Make shop form accepts no image or urls 
+- Edit shop
+- Edit user profile
 - Make the review shows 10 latest review
 - Make review deletable from my account
 
 
-
-Big Stuff
-
-
-
 Small stuff
-- Alignment of the shop on all category page
+- Alignment of the shop on all category page and on each category page
 
 Done
--Rating calculation
+- Rating calculation
 - add favorite shop method to product page
 - Make favorite shop removable and check before creating instance
 - Send user information and product(shop) information when you submit review
 - Need to fix unable to click any other link after putting review + reroute back to somewhere
 - See all the reviews of the owner - should be easy , copy the see all the reviews of each shop
+- Create shop page for owner - should be similar to review creation page
+- Delete Shop

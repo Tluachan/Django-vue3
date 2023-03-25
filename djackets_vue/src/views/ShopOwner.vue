@@ -23,16 +23,26 @@
                             v-for="showproduct in productlist" 
                             v-bind:key="showproduct.id"
                             v-bind:showproduct="showproduct">
+                            <p style="margin-bottom: 10px">
                                 <router-link v-bind:to="showproduct.get_absolute_url">
-                                <p><strong>{{ showproduct.name }}</strong></p>
+                                <strong>{{ showproduct.name }}</strong>
+                                
                                 </router-link>
+                                    <button class="button is-light is-small product-button">
+                                        Edit
+                                    </button>
+                                    <button class="button is-light is-small product-button" @click="deleteProduct(showproduct)">
+                                        Delete
+                                    </button>
+                            </p>
+                                        
                         </div>    
                     </div>   
 
             <!--/div-->           
             </div>
             <div ref="createshop" class="column is-4 is-offset-1">
-                <h2 style="font-size: 24px;">Create New Shop</h2>
+                <h2 style="font-size: 24px;">Create New Shop (All field is required)</h2>
                 <form @submit.prevent="submitForm">
                     <div class="field">
                     <label class="label">Category</label>
@@ -67,7 +77,7 @@
                     </div>
 
                     <div class="field">
-                    <label class="label">Image (Optional) </label>
+                    <label class="label">Image</label>
                     <div class="control">
                         <input class="input" type="file" @change="onFileChange">
                     </div>
@@ -149,6 +159,9 @@ export default ({
         this.product.image = event.target.files[0];
         },
         async submitForm() {
+
+            this.errors = []
+
             if (!this.product.category) {
             this.errors.push('Category is required');
             }
@@ -164,11 +177,18 @@ export default ({
             if (!this.product.address) {
             this.errors.push('Address is required');
             }
+            if (!this.product.image) {
+            this.errors.push('Image is required');
+            }
 
             if (!this.product.phone) {
             this.errors.push('Phone is required');
             }
+            if (!this.product.map_url) {
+            this.errors.push('Map URL is required');
+            }
 
+            if(!this.errors.length){
             const formData = new FormData();
             formData.append('category', this.product.category);
             formData.append('name', this.product.name);
@@ -195,13 +215,21 @@ export default ({
                    console.log('topath',toPath)
                     //this.$router.push(toPath)
 
-
                 })
                 .catch(error => {
                     if(error.response){
                         console.log(error)
                     }
                 })
+            } else {
+                    toast({
+                        message: this.errors.join('<br>'),
+                        type: 'is-warning is-light',
+                        dismissible: true,
+                        pauseOnHover: true,
+                        duration: 3000
+                    })
+            }
     
         },
 
@@ -217,7 +245,31 @@ export default ({
                 })
         },
         
+        deleteProduct(showproduct){
+            
+            if(window.confirm('Are you sure you would like to delete this shop?')){
+                console.log('product id',showproduct.id)
+                axios
+                    .delete(`/api/v1/products/${showproduct.id}`)
+                    .then(response =>{
+                        console.log('shop deleted')
+                        
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
+
+        },
     
     },
 })
 </script>
+
+<style scoped>
+.product-button {
+  margin-top: -3px;
+  margin-left: 10px;
+}
+
+</style>
