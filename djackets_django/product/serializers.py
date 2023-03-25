@@ -77,7 +77,9 @@ class ReviewSerializer(serializers.ModelSerializer):
         return Review.objects.create(**validated_data)   
 
 class ProductSerializer(serializers.ModelSerializer):
+    owner = UserSerializer(read_only=True)
     reviews = ReviewSerializer(many=True, read_only=True)
+    category = 'CategorySerializer'
     class Meta:
         model = Product
         fields = (
@@ -85,16 +87,23 @@ class ProductSerializer(serializers.ModelSerializer):
             "name",
             "description",
             "address",
+            "image",
             "get_absolute_url",
             "phone",
             "map_url",
             "avg_rating",
             "get_image",
             "get_thumbnail",
-            "reviews"
+            "reviews",
+            "owner",
+            "category",
         )
     
     def create(self, validated_data):
+        print('ser',validated_data)
+        #username = validated_data.pop('owner')
+        #Default average rating
+        validated_data['avg_rating'] = 0.0 
         return Product.objects.create(**validated_data)
 
 class CategorySerializer(serializers.ModelSerializer):

@@ -68,7 +68,7 @@ class Product(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     phone = models.CharField(max_length=20, blank=True)
     map_url = models.URLField(blank=True)
-    avg_rating = models.FloatField(blank=True)
+    avg_rating = models.FloatField(blank=True, null=True)
     owner = models.ForeignKey(User, blank=True,null=True,on_delete=models.CASCADE)
     favorite_count= models.IntegerField(blank=True,null=True)
 

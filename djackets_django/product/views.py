@@ -3,6 +3,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.db import transaction
+from django.utils.text import slugify
 
 from rest_framework import generics, viewsets
 from rest_framework.views import APIView
@@ -117,31 +118,47 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
 
     def create(self, request):
-        print('request', request.data)
-        # get the product object using the slug
-        product_slug = request.data.get('product')
-        #print(product_slug)
-        product = get_object_or_404(Product, slug=product_slug)
-        #print('product', product)
-        username = request.data.get('user')
-
+        print('request',request.data)
+        username = request.data.get('owner')
         user = get_object_or_404(User, username=username)
-        print('username pass to review',user)
-        # add the product object to the form data
-        review = Review.objects.create(
-            product=product,
-            content=request.data.get('content'),
-            rating=request.data.get('rating'),
-            user=user
+        print('check get user',user)
+        # create the Product object
+        category_id = request.data.get('category')
+        category = get_object_or_404(Category,id=category_id)
+        name = request.data.get('name')
+        description = request.data.get('description')
+        address = request.data.get('address')
+        image = request.data.get('image')
+        phone = request.data.get('phone')
+        map_url = request.data.get('map_url')
+        product_slug = slugify(name)
+        product = Product.objects.create(
+            category=category,
+            name=name,
+            slug=product_slug,
+            description=description,
+            address=address,
+            image=image,
+            phone=phone,
+            map_url=map_url,
+            avg_rating=0.0,
+            owner=user,
+            favorite_count=0,
         )
-        product.update_rating()
-        # serialize the new Review instance and return the serialized data
-        serializer = ReviewSerializer(instance=review)
+
+        # serialize the new Product instance and return the serialized data
+        serializer = ProductSerializer(instance=product)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def perform_create(self, serializer):
         serializer.save()
 
+    def list(self, request):
+        user = request.user
+        products = Product.objects.filter(owner=user)
+        serializer = self.serializer_class(products, many=True)
+        return Response(serializer.data)
+    
 
 class CategoryDetail(APIView):
     def get_object(self, category_slug):

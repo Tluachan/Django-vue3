@@ -38,15 +38,15 @@
 
                 <h2 style="font-size: 24px;">Your Favorite Shops</h2>
                 <div class="box">
-                <div 
-                    v-for="favshop in favshops" 
-                    v-bind:key="favshop.product"
-                    v-bind:favshop="fav-shop">
-                        <router-link v-bind:to="favshop.product.get_absolute_url">
-                        <p><strong>{{ favshop.product.name }}</strong></p>
-                        </router-link>
-                </div>    
-        </div>            
+                    <div 
+                        v-for="favshop in favshops" 
+                        v-bind:key="favshop.product"
+                        v-bind:favshop="fav-shop">
+                            <router-link v-bind:to="favshop.product.get_absolute_url">
+                            <p><strong>{{ favshop.product.name }}</strong></p>
+                            </router-link>
+                    </div>    
+                </div>            
 
 
         </div>

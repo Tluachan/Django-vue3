@@ -63,7 +63,7 @@ export default {
   },
   mounted() {
     this.getCategoryList()
-    document.title = 'Home | Djackets'
+    document.title = 'Home | Glasgo'
   },
   methods: {
     getCategoryList() {
