@@ -170,7 +170,17 @@ class ProductViewSet(viewsets.ModelViewSet):
         
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-            
+
+class SortedProductList(APIView):
+    def get(self, request, category_slug):
+        try:
+            category = Category.objects.get(slug=category_slug)
+        except Category.DoesNotExist:
+            raise Http404
+        products = category.products.all().order_by('-avg_rating')
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
+
 
 class CategoryDetail(APIView):
     def get_object(self, category_slug):
@@ -181,9 +191,11 @@ class CategoryDetail(APIView):
     
     def get(self, request, category_slug, format=None):
         category = self.get_object(category_slug)
+        products = category.products.all().order_by('-avg_rating')
         serializer = CategorySerializer(category)
         return Response(serializer.data)
-    
+
+#For getting all categories
 class CategoryList(APIView):
     def get(self, request, format=None):
         categories = Category.objects.all()

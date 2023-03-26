@@ -86,9 +86,9 @@ export default {
       const categorySlug =category.slug;
       console.log('slug', categorySlug)
         axios
-            .get(`/api/v1/products/${categorySlug}/`)
+            .get(`/api/v1/products/${categorySlug}/product-list`)
             .then(response => {
-                this.category = response.data
+                category.products = response.data
 
             })
             .catch(error => {

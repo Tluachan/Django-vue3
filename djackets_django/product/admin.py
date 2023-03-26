@@ -7,7 +7,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug':('name',)}
-    list_display = ('name','category','avg_rating')
+    list_display = ('id','name','category','avg_rating')
 
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ('id','user', 'product', 'rating')

@@ -18,3 +18,4 @@ Done
 - See all the reviews of the owner - should be easy , copy the see all the reviews of each shop
 - Create shop page for owner - should be similar to review creation page
 - Delete Shop
+- Shop sorted by rating

@@ -210,10 +210,10 @@ export default ({
                         duration: 3000
                     })
 
-                   //Redirect bak to shop owner page
-                   const toPath = this.$route.query.to || '/my-account'
+                   //Refresh the page
+                   const toPath = this.$route.query.to || '/user/shop-owner-view'
                    console.log('topath',toPath)
-                    //this.$router.push(toPath)
+                    window.location.href = toPath
 
                 })
                 .catch(error => {
@@ -253,6 +253,18 @@ export default ({
                     .delete(`/api/v1/products/${showproduct.id}`)
                     .then(response =>{
                         console.log('shop deleted')
+                        //Refresh the page
+                        const toPath = this.$route.query.to || '/user/shop-owner-view'
+                        console.log('topath',toPath)
+                        window.location.href = toPath
+
+                        toast({
+                            message: 'Shop deleted',
+                            type: 'is-success',
+                            dismissible: true,
+                            pauseOnHover: true,
+                            duration: 20000
+                        })
                         
                     })
                     .catch(error => {

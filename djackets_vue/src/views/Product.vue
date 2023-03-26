@@ -73,7 +73,7 @@ export default {
 
         // Check if user is authenticated and get favorite status
         const isAuthenticated = this.$store.state.isAuthenticated
-        console.log('authentication: ', isAuthenticated)
+        //console.log('authentication: ', isAuthenticated)
 
         if (isAuthenticated) {
             const product_slug = this.$route.params.product_slug
@@ -81,13 +81,13 @@ export default {
             axios
                 .get(`/api/v1/favorite-shops/product/${product_slug}/user/${user}`)
                 .then(response => {
-                    console.log('response favorite',response.data)
+                    //console.log('response favorite',response.data)
                     const id = response.data.id
-                    console.log('response id',id)
+                    //console.log('response id',id)
                     if (id !== null) {
-                        console.log('response data exists')
+                        //console.log('response data exists')
                         this.isFavorite = true
-                        console.log('print isfavorite',this.isFavorite)
+                        //console.log('print isfavorite',this.isFavorite)
                     }
                 })
                 .catch(error => {
@@ -109,7 +109,7 @@ export default {
                     product: product_slug,
                     user: user,
                 }                        
-                console.log('posting favorite')
+                //console.log('posting favorite')
                 axios
                     .post(`/api/v1/favorite-shops/`, favoriteData)
                     .then(response => {
@@ -126,8 +126,8 @@ export default {
                     product: product_slug,
                     user: user,
                 }    
-                console.log('deleting favorite')
-                console.log('favorite data to delete', favoriteData)
+                //console.log('deleting favorite')
+                //console.log('favorite data to delete', favoriteData)
                 axios
                     .delete(`/api/v1/favorite-shops/delete/`, {data: {user: user,product: product_slug}})
                     .then(response => {

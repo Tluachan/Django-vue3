@@ -1,6 +1,5 @@
 <template>
-    <div class="column is-3">
-        <div class="box">
+        <div class="box product-box">
             <figure class="image mb-4">
                 <img v-bind:src="product.get_thumbnail">
             </figure>
@@ -9,7 +8,7 @@
 
             <router-link v-bind:to="product.get_absolute_url" class="button is-dark mt-4">View details</router-link>
         </div>
-    </div>
+
 </template>
 
 <script>
@@ -26,5 +25,14 @@ export default {
     margin-top: -1.25rem;
     margin-left: -1.25rem;
     margin-right: -1.25rem;
+    height: 200px;
+    object-fit: cover;
+  }
+
+.product-box {
+    height: 400px;
+    margin-top: 1.25rem;
+    margin-left: 1.25rem;
+    margin-right: 1.25rem;
   }
 </style>

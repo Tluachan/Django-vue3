@@ -8,7 +8,7 @@
             <ProductBox 
                 v-for="product in category.products"
                 v-bind:key="product.id"
-                v-bind:product="product" />
+                v-bind:product="product"/>
         </div>
     </div>
 </template>

@@ -36,7 +36,7 @@
         <div class="navbar-end">
           <!--this is currently link to category slug-->
           <router-link to="/category" class="navbar-item">Category</router-link>
-          <router-link to="/winter" class="navbar-item">About us</router-link>
+          <router-link to="/about" class="navbar-item">About us</router-link>
 
           <div class="navbar-item">
             <div class="buttons">
@@ -66,7 +66,8 @@
     </section>
 
     <footer class="footer">
-      <p class="has-text-centered">Copyright (c) 2021</p>
+      <p class="has-text-centered">Copyright (c) 2023</p>
+      <router-link to="/contact"><p class="has-text-centered">Contact Us</p></router-link>
     </footer>
   </div>
 </template>
