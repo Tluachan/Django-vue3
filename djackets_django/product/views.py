@@ -52,12 +52,12 @@ class ReviewList(APIView):
             return Review.objects.filter(product__slug=product_slug)
         except Review.DoesNotExist:
             raise Http404
-    
+
     def get(self, request, product_slug, format=None):
         reviews = self.get_object(product_slug)
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
-    
+
 class UserAllReviewList(APIView):
     def get_object(self, username):
         user = User.objects.get(username=username)
@@ -66,7 +66,7 @@ class UserAllReviewList(APIView):
             return Review.objects.filter(user=user)
         except Review.DoesNotExist:
             raise Http404('This user has no review')
-    
+
     def get(self, request, username, format=None):
         print('user all review list')
         print('username', username)
@@ -74,19 +74,19 @@ class UserAllReviewList(APIView):
         print(reviews)
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
-    
+
 class UserDetail(APIView):
     def get_object(self, pk):
         try:
             return User.objects.get(pk=pk)
         except User.DoesNotExist:
             raise Http404
-    
+
     def get(self, request, pk, format=None):
         user = self.get_object(pk)
         serializer = UserSerializer(user)
         return Response(serializer.data)
-    
+
     def put(self, request, pk, format=None):
         user = self.get_object(pk)
         serializer = UserSerializer(user, data=request.data)
@@ -103,15 +103,19 @@ class LatestProductsList(APIView):
 
 class ProductDetail(APIView):
     def get_object(self, category_slug, product_slug):
+        print('get product detail')
         try:
+            print('get product', Product.objects.filter(category__slug=category_slug).get(slug=product_slug))
             return Product.objects.filter(category__slug=category_slug).get(slug=product_slug)
         except Product.DoesNotExist:
             raise Http404
-    
+
     def get(self, request, category_slug, product_slug, format=None):
+        print('product: get category',category_slug)
+        print('product: get product slug', product_slug)
         product = self.get_object(category_slug, product_slug)
         serializer = ProductSerializer(product)
-        return Response(serializer.data) 
+        return Response(serializer.data)
 
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
@@ -155,11 +159,19 @@ class ProductViewSet(viewsets.ModelViewSet):
         serializer.save()
 
     def list(self, request):
+        print('get shop list')
+        print('request', request)
+        print('request user', request.user)
+        print('request auth', request.auth)
+        print('user auth', request.user.is_authenticated)
+        username = request.user
+        user = get_object_or_404(User, username=username)
+        print('user after check', user)
         user = request.user
         products = Product.objects.filter(owner=user)
         serializer = self.serializer_class(products, many=True)
         return Response(serializer.data)
-    
+
     def destroy(self,request,pk=None):
         print('enter destroy')
         print('delete shop', request.data)
@@ -167,7 +179,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             product = Product.objects.get(pk=pk)
         except Product.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        
+
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -188,7 +200,7 @@ class CategoryDetail(APIView):
             return Category.objects.get(slug=category_slug)
         except Category.DoesNotExist:
             raise Http404
-    
+
     def get(self, request, category_slug, format=None):
         category = self.get_object(category_slug)
         products = category.products.all().order_by('-avg_rating')
@@ -237,7 +249,7 @@ class FavoriteShopViewSet(viewsets.ModelViewSet):
         #)
         if created:
             product.update_favorite_count()
-            
+
         # serialize the new Review instance and return the serialized data
         serializer = FavoriteShopSerializer(instance=favoriteShop)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -266,13 +278,21 @@ class FavoriteShopViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def list(self, request):
-        user = request.user
+        print('get favorite shop list')
+        print('request', request)
+        print('request user', request.user)
+        print('request auth', request.auth)
+        print('user auth', request.user.is_authenticated)
+        username = request.user
+        user = get_object_or_404(User, username=username)
+        print('user after check', user)
         favorite_shops = FavoriteShop.objects.filter(user=user)
+        print('fav shop', favorite_shops)
         serializer = self.serializer_class(favorite_shops, many=True)
         return Response(serializer.data)
-    
+
 class FavoriteShopView(APIView):
-    
+
     def delete(self, request):
         print('call delete')
         print(request.data)
@@ -292,7 +312,7 @@ class FavoriteShopView(APIView):
         # delete the FavoriteShop object and return a response with status code 204
         favorite_shop.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
     def get_object(self, product_slug,username):
         print('call get object')
         product = get_object_or_404(Product, slug=product_slug)
@@ -303,9 +323,9 @@ class FavoriteShopView(APIView):
             return favorite_shop
         except FavoriteShop.DoesNotExist:
             raise NotFound("This shop has not been favorited.")
-    
+
     def get(self, request, product_slug, username, format=None):
-  
+
         try:
             favorite_shop = self.get_object(product_slug,username)
             serializer = FavoriteShopSerializer(favorite_shop)

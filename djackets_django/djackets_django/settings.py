@@ -10,10 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,7 +28,7 @@ SECRET_KEY = 'django-insecure-v9p8t4-vjz_q_bcns@%*)#e6mgg-5^t&0svz^dp@_obkx$226(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['tluachan.eu.pythonanywhere.com',]
 
 
 # Application definition
@@ -48,6 +51,7 @@ INSTALLED_APPS = [
 #django-vue
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
+    "http://tluachan.eu.pythonanywhere.com",
 ]
 
 REST_FRAMEWORK = {
@@ -75,7 +79,7 @@ ROOT_URLCONF = 'djackets_django.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "djackets_vue/dist"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -96,8 +100,11 @@ WSGI_APPLICATION = 'djackets_django.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'TLuachan$glasgo',
+        'USER': 'TLuachan',
+        'PASSWORD': 'glasgo2023project',
+        'HOST': 'TLuachan.mysql.eu.pythonanywhere-services.com',
     }
 }
 
@@ -137,8 +144,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "djackets_vue/dist/static/"),
+    ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

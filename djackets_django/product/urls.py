@@ -23,7 +23,7 @@ urlpatterns = [
     path('favorite-shops/', FavoriteShopViewSet.as_view({'get': 'list', 'post': 'create'}), name='favorite-list'),
     #path('favorite-shops/<int:pk>/', FavoriteShopViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='favorite-detail'),
     path('favorite-shops/delete/', FavoriteShopView.as_view(), name='favorite-shop-delete'),
-    path('favorite-shops/product/<slug:product_slug>/user/<slug:username>/', FavoriteShopView.as_view(), name='favorite-shop-get'),
+    path('favorite-shops/product/<slug:product_slug>/user/<slug:username>', FavoriteShopView.as_view(), name='favorite-shop-get'),
     path('reviews/user/<slug:username>/', UserAllReviewList.as_view(), name='user_review_list'),
 ]
 
